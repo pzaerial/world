@@ -13,6 +13,7 @@ state := 0
 
 break := -1
 lastReelTime := 0
+lastRepairTime := A_TickCount
 
 while break < 0 {
 
@@ -167,6 +168,28 @@ DoCleanupActions() {
 	sleep fwdBackSleepTime2
 	Send, {a up}
 	sleep leftRightSleepTime2
+
+	; repair fishing rod every 4 hours
+	; open inventory
+	Send, {LAlt}
+	Sleep 2000
+	ImageSearch, fishingRodUnbrokenX, fishingRodUnbrokenY, 0, 0, A_ScreenWidth, A_ScreenHeight, fishingRodT5Unbroken.PNG
+    if(fishingRodUnbrokenX > 0){
+   	    Sleep 25
+   	} else {
+   	    ; hold r and click on rod
+		;Send, {r down}
+		;MouseClick, left, 868, 661
+		;Send, {r up}
+		;Sleep 500
+		; confirm repair
+		;Send, f
+		;Sleep 500
+		;lastRepairTime := curTime
+   	}
+   	; exit inventory
+	Send, {LAlt}
+	Sleep 250
 
 	sleep, 2000 
 }
