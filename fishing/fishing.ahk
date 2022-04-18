@@ -21,11 +21,11 @@ while break < 0 {
 		CastRod()
 		state := 1
 	} else if (state = 1) {
-		if(IsFishHooked() = 1){
+		if(IsLineCasted() = 1){
 			state := 2
 		}
 	} else if (state = 2) {
-		if(IsFishHooked() = 0){
+		if(IsLineCasted() = 0){
 			sleep 50
    	   	 	MouseClick, left
    	   	 	sleep 100
@@ -58,15 +58,17 @@ CastRod() {
 	MouseClick, left, 1500, 825
 	sleep 3000
 
-	; Cast Fishing Rod
+	; Cast Fishing Rod (Adjust length with sleep)
 	MouseClick, left,,, 1, 0, D
-	;sleep 250
+	;Sleep 1325
 	MouseClick, left,,, 1, 0, U
+
+	sleep 1000
 }
 
-IsFishHooked() {
-	ImageSearch, OutputVarX, OutputVarY, 0, 0, A_ScreenWidth, A_ScreenHeight, fishing.PNG
-    if(OutputVarX > 0){
+IsLineCasted() {
+	ImageSearch, fishX, fishY, 0, 0, A_ScreenWidth, A_ScreenHeight, fishing.PNG
+    if(fishX > 0){
    	    return 1
    	} else {
    	    return 0
@@ -124,8 +126,8 @@ IsLineSlack() {
 }
 
 IsF3PromptVisible() {
-	ImageSearch, OutputVarX, OutputVarY, 0, 0, A_ScreenWidth, A_ScreenHeight, F3Prompt.PNG
-    if(OutputVarX > 0){
+	ImageSearch, f3X, f3Y, 0, 0, A_ScreenWidth, A_ScreenHeight, F3Prompt.PNG
+    if(f3X > 0){
    	    return 1
    	} else {
    	    return 0
