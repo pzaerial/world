@@ -16,7 +16,8 @@ window_ref = None ## Reference to the window.
 window_searchable_region = None ## Region used for image searching.
 
 # Customizable Knobs
-CASTING_TIME = 0.000 # Time holding left click before casting. 
+WATER_TYPE = "SALTWATER" # SALTWATER or FRESHWATER. Inventory should have no more than one row of each. 
+CASTING_TIME = 0.000 # Time holding left click before casting. 1.500 or 0.000 common options.
 BASE_REELING_TIME = 1.500 # Base amount we reel in for each time.
 ADDITIONAL_REELING_TIME = 0.015 # Additional reeling time for each iteration. Scales linearly.
 MAX_REELS_BEFORE_CONTINUING = 25 #When reeling in, stop after this many pulls, as the fish has probably gotten away.
@@ -77,7 +78,10 @@ def gameLoop():
 			print("INFO: Equipping bait.")
 			pyautogui.press('r')
 			time.sleep(1.500)
-			win32api.SetCursorPos((1180, 450))
+			if WATER_TYPE == "SALTWATER":
+				win32api.SetCursorPos((1180, 600))
+			else:
+				win32api.SetCursorPos((1180, 450))
 			time.sleep(0.100)
 			win32api.mouse_event(win32con.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0)
 			win32api.mouse_event(win32con.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0)
@@ -127,6 +131,7 @@ def gameLoop():
 					print("INFO: Finished reeling.")
 					keepReeling = False
 					continue
+
 				if isKeyDown == True:
 					now = time.time()
 					elapsedTime = now - lastReelStartTime
@@ -141,6 +146,10 @@ def gameLoop():
 							if(window_is_active == False):
 								print("INFO: Game Window not in focus. Breaking from loop.")
 								return
+
+							if isF3PromptVisible():
+								print("INFO: The hooked object escaped.")
+								break
 
 							elapsedTime = time.time() - slackWaitStart
 							if isLineSlack() or elapsedTime > MAX_TIME_BEFORE_CONTINUING:
@@ -223,8 +232,6 @@ def isLineSlack():
 	if img1 is not None or img2 is not None:
 		return True
 	return False
-
-
 
 ## Script style handler
 if __name__ == '__main__':
