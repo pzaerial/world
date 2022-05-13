@@ -16,11 +16,14 @@ window_ref = None ## Reference to the window.
 window_searchable_region = None ## Region used for image searching.
 
 # Customizable Knobs
-CASTING_TIME = 1.500 # Time holding left click before casting. 
+CASTING_TIME = 0.000 # Time holding left click before casting. 
 BASE_REELING_TIME = 1.500 # Base amount we reel in for each time.
 ADDITIONAL_REELING_TIME = 0.015 # Additional reeling time for each iteration. Scales linearly.
 MAX_REELS_BEFORE_CONTINUING = 25 #When reeling in, stop after this many pulls, as the fish has probably gotten away.
 MAX_TIME_BEFORE_CONTINUING = 3.000 # When reeling in each time, stop after pulling for this long, as the line has probably broken.
+
+# Ignore PyAutoGUI failsafe.
+pyautogui.FAILSAFE = False
 
 def main():
 	print("INFO: Initializing...")
@@ -115,6 +118,11 @@ def gameLoop():
 			lastReelStartTime = 0
 			reelTimes = 0
 			while keepReeling == True:
+				window_is_active = window_ref.isActive
+				if(window_is_active == False):
+					print("INFO: Game Window not in focus. Breaking from loop.")
+					return
+
 				if isF3PromptVisible() or reelTimes > MAX_REELS_BEFORE_CONTINUING:
 					print("INFO: Finished reeling.")
 					keepReeling = False
@@ -129,6 +137,11 @@ def gameLoop():
 						slackWaitStart = time.time()
 						elapsedTime = 0
 						while True: 
+							window_is_active = window_ref.isActive
+							if(window_is_active == False):
+								print("INFO: Game Window not in focus. Breaking from loop.")
+								return
+
 							elapsedTime = time.time() - slackWaitStart
 							if isLineSlack() or elapsedTime > MAX_TIME_BEFORE_CONTINUING:
 								break
@@ -199,9 +212,10 @@ def isLineCasted():
 
 def isF3PromptVisible():
 	img = pyautogui.locateOnScreen("F3Prompt.png")
-	if img is None:
-		return False
-	return True
+	img2 = pyautogui.locateOnScreen("F3Prompt2.png")
+	if img is not None or img2 is not None:
+		return True
+	return False
 
 def isLineSlack():
 	img1 = pyautogui.locateOnScreen("fishinglowtension.png")
